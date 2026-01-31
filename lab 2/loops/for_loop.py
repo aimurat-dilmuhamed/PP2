@@ -1,1 +1,1 @@
-fruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  print(x)`n`nfor x in "banana":`n  print(x)`n`nfor x in range(6):`n  print(x)`n`nfor x in range(2, 6):`n  print(x)`n`nfor x in range(2, 30, 3):`n  print(x)
+#1 Looping through a list`nfruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  print(x)`n`n#2 Looping through a string`nfor x in "banana":`n  print(x)`n`n#3 Using range()`nfor x in range(6):`n  print(x)

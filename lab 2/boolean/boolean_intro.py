@@ -1,1 +1,1 @@
-print(10 > 9)`nprint(10 == 9)`nprint(10 < 9)`n`na = 200`nb = 33`n`nif b > a:`n  print("b is greater than a")`nelse:`n  print("b is not greater than a")
+#1 Basic Boolean values`nprint(10 > 9)      # True`nprint(10 == 9)     # False`n`n#2 Evaluating variables`na = 200`nb = 33`nif b > a:`n  print("b is greater than a")`nelse:`n  print("b is not greater than a")

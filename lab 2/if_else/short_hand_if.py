@@ -1,1 +1,1 @@
-if a > b: print("a is greater than b")`n`na = 2`nb = 330`nprint("A") if a > b else print("B")`n`na = 330`nb = 330`nprint("A") if a > b else print("=") if a == b else print("B")`n`n# Logical operators`na = 200`nb = 33`nc = 500`nif a > b and c > a:`n  print("Both conditions are True")`nif a > b or a > c:`n  print("At least one condition is True")`nif not a > b:`n  print("a is NOT greater than b")
+#1 Short hand if`nif a > b: print("a is greater than b")`n`n#2 Short hand if else`na = 2`nb = 330`nprint("A") if a > b else print("B")
