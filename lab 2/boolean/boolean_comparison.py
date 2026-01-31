@@ -1,1 +1,1 @@
-a = 200`nb = 33`nif b > a:`n  print("b is greater than a")`nelse:`n  print("b is not greater than a")`n`n# evaluate values and variables`nprint(bool("Hello"))`nprint(bool(15))`nx = "Hello"`ny = 15`nprint(bool(x))`nprint(bool(y))
+print(bool("Hello"))`nprint(bool(15))`n`nx = "Hello"`ny = 15`n`nprint(bool(x))`nprint(bool(y))`n`n# Values that are True`nprint(bool("abc"))`nprint(bool(123))`nprint(bool(["apple", "cherry", "banana"]))`n`n# Values that are False`nprint(bool(False))`nprint(bool(None))`nprint(bool(0))`nprint(bool(""))`nprint(bool(()))`nprint(bool([]))`nprint(bool({}))

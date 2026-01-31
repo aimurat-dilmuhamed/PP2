@@ -1,1 +1,1 @@
-print(bool(False))`nprint(bool(None))`nprint(bool(0))`nprint(bool(""))`nprint(bool(()))`nprint(bool([]))`nprint(bool({}))
+class myclass():`n  def __len__(self):`n    return 0`n`nmyobj = myclass()`nprint(bool(myobj))`n`ndef myFunction() :`n  return True`n`nprint(myFunction())`n`nif myFunction():`n  print("YES!")`nelse:`n  print("NO!")`n`nx = 200`nprint(isinstance(x, int))

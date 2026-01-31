@@ -1,1 +1,1 @@
-fruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  if x == "banana":`n    continue`n  print(x)
+fruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  if x == "banana":`n    continue`n  print(x)`n`nfor x in range(6):`n  print(x)`nelse:`n  print("Finally finished!")`n`nadj = ["red", "big", "tasty"]`nfruits = ["apple", "banana", "cherry"]`nfor x in adj:`n  for y in fruits:`n    print(x, y)`n`nfor x in [0, 1, 2]:`n  pass

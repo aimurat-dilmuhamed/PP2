@@ -1,1 +1,1 @@
-fruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  print(x)
+fruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  print(x)`n`nfor x in "banana":`n  print(x)`n`nfor x in range(6):`n  print(x)`n`nfor x in range(2, 6):`n  print(x)`n`nfor x in range(2, 30, 3):`n  print(x)
