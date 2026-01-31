@@ -1,1 +1,29 @@
-#1 Basic Boolean values`nprint(10 > 9)      # True`nprint(10 == 9)     # False`n`n#2 Evaluating variables`na = 200`nb = 33`nif b > a:`n  print("b is greater than a")`nelse:`n  print("b is not greater than a")
+#1 example
+print(10 > 9)
+print(10 == 9)
+print(10 < 9)
+
+#2 example
+a = 200
+b = 33
+
+if b > a:
+  print("b is greater than a")
+else:
+  print("b is not greater than a")
+
+#3 example
+print(bool("Hello"))
+print(bool(15))
+
+#4 example
+x = "Hello"
+y = 15
+
+print(bool(x))
+print(bool(y))
+
+#5 example
+bool("abc")
+bool(123)
+bool(["apple", "cherry", "banana"])

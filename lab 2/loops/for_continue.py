@@ -1,1 +1,30 @@
-fruits = ["apple", "banana", "cherry"]`nfor x in fruits:`n  if x == "banana":`n    continue`n  print(x)`n`nfor x in range(6):`n  print(x)`nelse:`n  print("Finally finished!")`n`nadj = ["red", "big", "tasty"]`nfruits = ["apple", "banana", "cherry"]`nfor x in adj:`n  for y in fruits:`n    print(x, y)`n`nfor x in [0, 1, 2]:`n  pass
+#1 Skip even numbers
+for i in range(1, 10):
+    if i % 2 == 0:
+        continue
+    print(i)
+
+#2 Skip empty strings
+for s in ["hi", "", "hello", ""]:
+    if s == "":
+        continue
+    print(s)
+
+#3 Skip numbers less than 3
+for i in range(6):
+    if i < 3:
+        continue
+    print(i)
+
+#4 Skip negative numbers
+nums = [3, -1, 5, -2, 7]
+for n in nums:
+    if n < 0:
+        continue
+    print(n)
+
+#5 Skip short words
+for word in ["cat", "house", "dog", "school"]:
+    if len(word) < 4:
+        continue
+    print(word)
