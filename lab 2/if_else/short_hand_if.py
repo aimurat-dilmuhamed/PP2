@@ -1,1 +1,1 @@
-a = 200`nb = 33`nif a > b: print("a is greater than b")`nprint("A") if a > b else print("B")
+a = 200`nb = 33`nif a > b: print("a is greater than b")`n`n# Short Hand If...Else`nprint("A") if a > b else print("B")`n`n# Multiple conditions`na = 200`nb = 33`nc = 500`nif a > b and c > a:`n  print("Both conditions are True")

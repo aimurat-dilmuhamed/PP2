@@ -1,1 +1,1 @@
-a = 200`nb = 33`nif b > a:`n  print("b is greater than a")`nelse:`n  print("b is not greater than a")
+a = 200`nb = 33`nif b > a:`n  print("b is greater than a")`nelse:`n  print("b is not greater than a")`n`n# evaluate values and variables`nprint(bool("Hello"))`nprint(bool(15))`nx = "Hello"`ny = 15`nprint(bool(x))`nprint(bool(y))

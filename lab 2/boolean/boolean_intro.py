@@ -1,1 +1,1 @@
-print(10 > 9)  # True`nprint(10 == 9) # False`nprint(bool("Hello")) # True
+print(10 > 9)`nprint(10 == 9)`nprint(10 < 9)
