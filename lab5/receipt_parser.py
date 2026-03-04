@@ -1,56 +1,123 @@
 import re
 import json
 
+
 def parse_receipt(file_path):
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         data = f.read()
 
-    # 1. Extract Date and Time
-    # Matches DD/MM/YYYY and HH:MM:SS
-    date = re.search(r'(\d{2}/\d{2}/\d{4})', data).group(1)
-    time = re.search(r'(\d{2}:\d{2}:\d{2})', data).group(1)
+    # ---------------------------------------------------
+    # 1️⃣ Extract Date and Time
+    # Format in receipt:
+    # Время: 18.04.2019 11:13:58
+    # ---------------------------------------------------
 
-    # 2. Extract Product Names and Prices
-    # Pattern: Matches text at start of line, then spaces, then a decimal number
-    # Group 1: Product Name | Group 2: Price
-    product_pattern = r'^([A-Za-z\s]+?)\s+(\d+\.\d{2})'
-    items_found = re.findall(product_pattern, data, re.MULTILINE)
+    datetime_match = re.search(
+        r'Время:\s+(\d{2}\.\d{2}\.\d{4})\s+(\d{2}:\d{2}:\d{2})',
+        data
+    )
 
-    products = []
-    prices = []
-    for item in items_found:
-        name = item[0].strip()
-        price = float(item[1])
-        # Filter out "TOTAL AMOUNT" from the product list if it's caught
-        if "TOTAL" not in name.upper():
-            products.append(name)
-            prices.append(price)
+    date = datetime_match.group(1) if datetime_match else "Unknown"
+    time = datetime_match.group(2) if datetime_match else "Unknown"
 
-    # 3. Calculate Total
-    total_calculated = sum(prices)
+    # ---------------------------------------------------
+    # 2️⃣ Extract ALL products
+    #
+    # Receipt structure for each item:
+    #
+    # 1.
+    # Product Name
+    # 2,000 x 154,00
+    # 308,00
+    # Стоимость
+    # 308,00
+    #
+    # We match:
+    # - item number
+    # - product name
+    # - quantity
+    # - unit price
+    # - total price
+    # ---------------------------------------------------
 
-    # 4. Extract Payment Method
-    # Matches word after "PAYMENT METHOD:"
-    payment_match = re.search(r'PAYMENT METHOD:\s+(\w+)', data)
-    payment_method = payment_match.group(1) if payment_match else "Unknown"
+    item_pattern = re.findall(
+        r'\d+\.\s*\n'                      # Item number (1. 2. 3.)
+        r'(.+?)\n'                          # Product name (lazy match)
+        r'(\d+,\d+)\s*x\s*'                 # Quantity (example: 2,000)
+        r'([\d\s]+,\d{2})\n'                # Unit price (example: 1 200,00)
+        r'([\d\s]+,\d{2})',                 # Total price
+        data
+    )
 
-    # 5. Create Structured Output
+    items = []
+
+    for match in item_pattern:
+        name = match[0].strip()
+        quantity = float(match[1].replace(",", "."))
+        unit_price = float(match[2].replace(" ", "").replace(",", "."))
+        total_price = float(match[3].replace(" ", "").replace(",", "."))
+
+        items.append({
+            "product": name,
+            "quantity": quantity,
+            "unit_price": unit_price,
+            "total_price": total_price
+        })
+
+    # ---------------------------------------------------
+    # 3️⃣ Extract GRAND TOTAL
+    #
+    # Format:
+    # ИТОГО:
+    # 18 009,00
+    # ---------------------------------------------------
+
+    total_match = re.search(
+        r'ИТОГО:\s*\n([\d\s]+,\d{2})',
+        data
+    )
+
+    grand_total = (
+        float(total_match.group(1).replace(" ", "").replace(",", "."))
+        if total_match else 0.0
+    )
+
+    # ---------------------------------------------------
+    # 4️⃣ Detect Payment Method
+    #
+    # If receipt contains:
+    # "Банковская карта:"
+    # we assume payment by Card
+    # ---------------------------------------------------
+
+    if re.search(r'Банковская карта:', data):
+        payment_method = "Card"
+    else:
+        payment_method = "Unknown"
+
+    # ---------------------------------------------------
+    # 5️⃣ Build Final JSON Structure
+    # ---------------------------------------------------
+
     receipt_json = {
-        "store_info": {
-            "date": date,
-            "time": time
-        },
-        "items": [
-            {"product": p, "price": pr} for p, pr in zip(products, prices)
-        ],
+        "store": "EUROPHARMA",
+        "date": date,
+        "time": time,
+        "items": items,
         "summary": {
-            "total_amount": round(total_calculated, 2),
+            "total_items": len(items),
+            "grand_total": grand_total,
             "payment_method": payment_method
         }
     }
 
     return receipt_json
 
+
+# ---------------------------------------------------
+# Run Parser
+# ---------------------------------------------------
+
 if __name__ == "__main__":
     result = parse_receipt("raw.txt")
-    print(json.dumps(result, indent=4))
+    print(json.dumps(result, indent=4, ensure_ascii=False))
