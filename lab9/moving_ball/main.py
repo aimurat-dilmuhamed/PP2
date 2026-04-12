@@ -22,7 +22,7 @@ SCREEN_WIDTH  = 800
 SCREEN_HEIGHT = 600
 FPS           = 60
 
-COLOR_BG      = (245, 245, 245)   # White-ish background (as per requirements)
+COLOR_BG      = (245, 245, 245)   # White-ish background 
 COLOR_GRID    = (220, 220, 220)   # Light grid lines
 COLOR_TEXT    = (60,  60,  80)
 COLOR_ACCENT  = (80,  120, 220)
