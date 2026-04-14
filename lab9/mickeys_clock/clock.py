@@ -12,7 +12,7 @@ class MickeyClock:
         img_dir = os.path.join(base_dir, "images")
 
         # 1. Load Background
-        self.bg = pygame.image.load(os.path.join(img_dir, "clock.jpg"))
+        self.bg = pygame.image.load(os.path.join(img_dir, "clock.png"))
         self.bg = pygame.transform.scale(self.bg, self.screen_size)
         
         # 2. Load Mickey's body
