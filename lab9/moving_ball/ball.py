@@ -48,7 +48,7 @@ class Ball:
         # Boundary check — only apply if the new position keeps ball on screen
         if self._in_bounds(new_x, new_y):
             self.x, self.y = new_x, new_y
-        # else: silently ignore (assignment requirement: ignore off-screen input)
+        # else: silently ignore 
 
     def _in_bounds(self, x, y):
         """Return True if (x, y) center keeps the ball fully inside the screen."""
