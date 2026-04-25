@@ -25,6 +25,11 @@
         "distance": 310
     },
     {
+        "name": "rr",
+        "score": 720,
+        "distance": 356
+    },
+    {
         "name": "ss",
         "score": 604,
         "distance": 101
@@ -43,10 +48,5 @@
         "name": "ss",
         "score": 370,
         "distance": 67
-    },
-    {
-        "name": "sa",
-        "score": 322,
-        "distance": 146
     }
 ]
