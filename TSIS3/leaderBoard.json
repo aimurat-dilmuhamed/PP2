@@ -10,6 +10,11 @@
         "distance": 276
     },
     {
+        "name": " \u0430\\",
+        "score": 1425,
+        "distance": 718
+    },
+    {
         "name": "Speedster",
         "score": 1250,
         "distance": 450
@@ -25,6 +30,11 @@
         "distance": 101
     },
     {
+        "name": "pp",
+        "score": 543,
+        "distance": 183
+    },
+    {
         "name": "Player1",
         "score": 450,
         "distance": 120
@@ -38,15 +48,5 @@
         "name": "sa",
         "score": 322,
         "distance": 146
-    },
-    {
-        "name": "homelander",
-        "score": 115,
-        "distance": 28
-    },
-    {
-        "name": "homelander",
-        "score": 94,
-        "distance": 23
     }
 ]
