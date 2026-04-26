@@ -73,7 +73,7 @@ def _fetch_contacts_with_phones(conn, contact_ids):
             FROM contacts c
             LEFT JOIN groups g ON g.id = c.group_id
             WHERE c.id = ANY(%s)
-            ORDER BY c.first_name, c.last_name
+            
             """,
             (list(contact_ids),),
         )
@@ -90,7 +90,7 @@ def _fetch_contacts_with_phones(conn, contact_ids):
 
     for c in contacts.values():
         c.setdefault("phones", [])
-    return list(contacts.values())
+    return [contacts[cid] for cid in contact_ids if cid in contacts]
 
 
 # ──────────────────────────────────────────────────────────────
