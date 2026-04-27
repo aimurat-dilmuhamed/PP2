@@ -1,7 +1,6 @@
 """
-phonebook.py  –  PhoneBook Extended (TSIS 1)
-Builds on the CRUD / CSV / search / pagination foundations from
-Practice 7 & 8.  Only NEW features are implemented here.
+my main phonebook file for TSIS 1.
+adding the new features on top of what we did in practice 7 and 8.
 """
 
 import csv
@@ -15,9 +14,7 @@ import psycopg2.extras
 
 from connect import get_connection
 
-# ──────────────────────────────────────────────────────────────
-# Helpers
-# ──────────────────────────────────────────────────────────────
+# --- helper functions ---
 
 def _conn():
     return get_connection()
@@ -28,7 +25,7 @@ def _fmt_date(d):
 
 
 def _parse_date(s):
-    """Return a date object or None from a YYYY-MM-DD string."""
+    """turn string into a date object, return nothing if it's empty or wrong"""
     s = (s or "").strip()
     if not s:
         return None
@@ -40,7 +37,7 @@ def _parse_date(s):
 
 
 def _print_contacts(rows):
-    """Pretty-print a list of contact dicts / Row objects."""
+    """print out contacts so they look nice on the screen"""
     if not rows:
         print("  (no contacts found)")
         return
@@ -62,7 +59,7 @@ def _print_contacts(rows):
 
 
 def _fetch_contacts_with_phones(conn, contact_ids):
-    """Return a list of enriched contact dicts for the given ids."""
+    """get contacts and attach their phone numbers to them"""
     if not contact_ids:
         return []
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -93,12 +90,10 @@ def _fetch_contacts_with_phones(conn, contact_ids):
     return [contacts[cid] for cid in contact_ids if cid in contacts]
 
 
-# ──────────────────────────────────────────────────────────────
-# 3.1  Schema initialisation
-# ──────────────────────────────────────────────────────────────
+# --- setup database ---
 
 def init_schema():
-    """Apply schema.sql and procedures.sql to the connected DB."""
+    """run the sql files to create tables and functions"""
     base = os.path.dirname(os.path.abspath(__file__))
     with _conn() as conn:
         with conn.cursor() as cur:
@@ -111,12 +106,10 @@ def init_schema():
     print("✅  Schema and procedures applied.")
 
 
-# ──────────────────────────────────────────────────────────────
-# 3.2  Advanced console search & filter
-# ──────────────────────────────────────────────────────────────
+# --- search and filters ---
 
 def filter_by_group():
-    """Show contacts in a selected group."""
+    """find people that belong to a specific group"""
     with _conn() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT id, name FROM groups ORDER BY name")
@@ -159,7 +152,7 @@ def filter_by_group():
 
 
 def search_by_email():
-    """Search contacts by partial email match."""
+    """search contacts by typing part of their email"""
     query = input("Email search term: ").strip()
     with _conn() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -173,7 +166,7 @@ def search_by_email():
 
 
 def sort_and_list():
-    """List all contacts sorted by name, birthday, or date added."""
+    """show all contacts but ordered by what the user picks"""
     print("\nSort by:  1) Name   2) Birthday   3) Date added")
     choice = input("Choice [1]: ").strip() or "1"
     order_map = {"1": "c.first_name, c.last_name", "2": "c.birthday NULLS LAST", "3": "c.created_at"}
@@ -188,7 +181,7 @@ def sort_and_list():
 
 
 def paginated_browse():
-    """Navigate contacts page-by-page using the DB pagination function."""
+    """look through contacts a few at a time so it doesn't spam the screen"""
     page_size = 5
     page = 0
 
@@ -234,12 +227,10 @@ def paginated_browse():
             break
 
 
-# ──────────────────────────────────────────────────────────────
-# 3.3  Import / Export
-# ──────────────────────────────────────────────────────────────
+# --- import and export stuff ---
 
 def export_to_json(filepath="contacts_export.json"):
-    """Export all contacts (with phones and group) to a JSON file."""
+    """save everything to a json file"""
     with _conn() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("SELECT id FROM contacts c ORDER BY first_name, last_name")
@@ -258,10 +249,7 @@ def export_to_json(filepath="contacts_export.json"):
 
 
 def _upsert_contact_from_dict(conn, data, on_duplicate="ask"):
-    """
-    Insert or overwrite a contact from a dict.
-    on_duplicate: 'skip' | 'overwrite' | 'ask'
-    """
+    """add a new contact, or update them if they already exist"""
     first = (data.get("first_name") or "").strip()
     last  = (data.get("last_name")  or "").strip() or None
     if not first:
@@ -336,7 +324,7 @@ def _upsert_contact_from_dict(conn, data, on_duplicate="ask"):
 
 
 def import_from_json(filepath=None):
-    """Import contacts from a JSON file with duplicate handling."""
+    """load contacts from json"""
     if filepath is None:
         filepath = input("JSON file path [contacts_export.json]: ").strip() or "contacts_export.json"
     if not os.path.exists(filepath):
@@ -357,12 +345,7 @@ def import_from_json(filepath=None):
 
 
 def import_from_csv(filepath=None):
-    """
-    Extended CSV importer (TSIS 1):
-    Handles new fields: email, birthday, group, phone_type.
-    Expected columns:
-        first_name, last_name, email, birthday, group, phone, phone_type
-    """
+    """read the csv file and save people to the db. handles the new columns like birthday/email"""
     if filepath is None:
         filepath = input("CSV file path [contacts.csv]: ").strip() or "contacts.csv"
     if not os.path.exists(filepath):
@@ -381,12 +364,10 @@ def import_from_csv(filepath=None):
     print(f"✅  CSV import complete: processed {imported} rows.")
 
 
-# ──────────────────────────────────────────────────────────────
-# 3.4  Stored-procedure wrappers
-# ──────────────────────────────────────────────────────────────
+# --- calling db procedures ---
 
 def call_add_phone():
-    """Console wrapper for the add_phone stored procedure."""
+    """use the sql procedure to add a phone"""
     name  = input("Contact name: ").strip()
     phone = input("Phone number: ").strip()
     ptype = input("Type (home/work/mobile) [mobile]: ").strip().lower() or "mobile"
@@ -398,7 +379,7 @@ def call_add_phone():
 
 
 def call_move_to_group():
-    """Console wrapper for the move_to_group stored procedure."""
+    """use the sql procedure to change someone's group"""
     name  = input("Contact name: ").strip()
     group = input("Target group name: ").strip()
     with _conn() as conn:
@@ -409,7 +390,7 @@ def call_move_to_group():
 
 
 def call_search_contacts():
-    """Console wrapper for the search_contacts DB function."""
+    """use the sql function to search across everything"""
     query = input("Search query: ").strip()
     with _conn() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -420,9 +401,7 @@ def call_search_contacts():
     _print_contacts(results)
 
 
-# ──────────────────────────────────────────────────────────────
-# Main menu
-# ──────────────────────────────────────────────────────────────
+# --- main menu loop ---
 
 MENU = """
 ╔══════════════════════════════════════════════════╗
