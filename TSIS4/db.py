@@ -1,7 +1,7 @@
 import psycopg2
 
 DB_CONFIG = {
-    "dbname": "postgres", # Change if you created a specific database
+    "dbname": "postgres",
     "user": "postgres",
     "password": "676767", # 
     "host": "localhost",
