@@ -10,6 +10,7 @@ DB_CONFIG = {
 }
 
 def get_connection():
+    # try to connect to postgres, and print some help if it fails
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         return conn
@@ -23,6 +24,7 @@ def get_connection():
         raise e 
 
 def setup_database():
+    # create the tables for players and scores if this is the first time running
     try:
         conn = get_connection()
         cur = conn.cursor()
@@ -46,6 +48,7 @@ def setup_database():
         print(f"Database Setup Error: {e}")
 
 def get_or_create_player(username):
+    # add the player to the db if they don't exist, and return their id
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
@@ -60,6 +63,7 @@ def get_or_create_player(username):
     return player_id
 
 def save_score(player_id, score, level):
+    # save the player's score and what level they made it to
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
@@ -71,6 +75,7 @@ def save_score(player_id, score, level):
     conn.close()
 
 def get_top_10():
+    # grab the best 10 scores from all players to show on the leaderboard
     try:
         conn = get_connection()
         cur = conn.cursor()
@@ -89,6 +94,7 @@ def get_top_10():
         return []
 
 def get_personal_best(player_id):
+    # find the highest score this specific player has ever gotten
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT MAX(score) FROM game_sessions WHERE player_id = %s;", (player_id,))

@@ -11,6 +11,7 @@ font = pygame.font.SysFont(None, 48)
 small_font = pygame.font.SysFont(None, 36)
 
 def draw_button(text, rect, color, hover_color, mouse_pos):
+    # helper to draw a button and change its color if the mouse is over it
     is_hover = rect.collidepoint(mouse_pos)
     pygame.draw.rect(screen, hover_color if is_hover else color, rect)
     text_surf = font.render(text, True, (255, 255, 255))
@@ -18,6 +19,7 @@ def draw_button(text, rect, color, hover_color, mouse_pos):
     return is_hover
 
 def main():
+    # setup everything before starting the loop
     db.setup_database()
     settings = config.load_settings()
     
@@ -38,7 +40,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 click = True
             
-            # Username typing logic
+            # let the user type their name, and handle backspace
             if state == "MENU" and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     username = username[:-1]
@@ -48,11 +50,11 @@ def main():
         screen.fill((20, 20, 20))
 
         if state == "MENU":
-            # Title
+            # show the main menu
             title = font.render("SNAKE GAME", True, (0, 255, 0))
             screen.blit(title, (WIDTH//2 - title.get_width()//2, 50))
             
-            # Username input
+            # blinking cursor for the username input
             prompt = small_font.render("Type Username: " + username + ("_" if pygame.time.get_ticks() % 1000 < 500 else ""), True, (200, 200, 200))
             screen.blit(prompt, (WIDTH//2 - prompt.get_width()//2, 150))
 
@@ -73,14 +75,17 @@ def main():
                 running = False
 
         elif state == "PLAYING":
+            # run the actual game and wait for it to finish
             last_score, last_level = game.run_game(screen, settings, personal_best)
-            if last_score is None: # User closed window during game
+            if last_score is None: # user closed the window while playing
                 running = False
             else:
+                # game over, save the score to the db
                 db.save_score(player_id, last_score, last_level)
                 state = "GAME_OVER"
 
         elif state == "GAME_OVER":
+            # game over screen
             go_text = font.render("GAME OVER", True, (255, 0, 0))
             screen.blit(go_text, (WIDTH//2 - go_text.get_width()//2, 100))
             
@@ -97,6 +102,7 @@ def main():
                 state = "MENU"
 
         elif state == "LEADERBOARD":
+            # fetch the top scores and display them
             title = font.render("TOP 10 SCORES", True, (255, 215, 0))
             screen.blit(title, (WIDTH//2 - title.get_width()//2, 30))
             
@@ -111,6 +117,7 @@ def main():
                 state = "MENU"
 
         elif state == "SETTINGS":
+            # simple settings menu to toggle things
             title = font.render("SETTINGS", True, (255, 255, 255))
             screen.blit(title, (WIDTH//2 - title.get_width()//2, 50))
 
@@ -130,7 +137,7 @@ def main():
                 settings["sound"] = not settings["sound"]
                 config.save_settings(settings)
                 
-            # Simple color cycler logic (Green -> Blue -> Yellow)
+            # change the snake color (Green -> Blue -> Yellow)
             if draw_button("Cycle Snake Color", btn_color, tuple(settings["snake_color"]), (150, 150, 150), mouse_pos) and click:
                 c = settings["snake_color"]
                 if c == [0, 255, 0]: settings["snake_color"] = [0, 100, 255] # Blue
