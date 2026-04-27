@@ -116,7 +116,7 @@ def main():
                 elif event.key == pygame.K_f: current_tool = 'fill'
                 elif event.key == pygame.K_e: current_tool = 'eraser'
                 
-                # Shapes shortcuts (Optional, extending practice 11)
+                # Shapes shortcuts
                 elif event.key == pygame.K_7: current_tool = 'right_tri'
                 elif event.key == pygame.K_8: current_tool = 'eq_tri'
                 elif event.key == pygame.K_9: current_tool = 'rhombus'
