@@ -1,10 +1,9 @@
 -- ============================================================
--- procedures.sql  –  New PL/pgSQL objects for TSIS 1
--- (Procedures from Practice 8 are NOT repeated here.)
+-- procedures.sql  –  PL/pgSQL objects for TSIS 1
 -- ============================================================
 
--- 1. add_phone ────────────────────────────────────────────────
---    Adds a phone number to an existing contact looked up by name.
+-- 1. add_phone
+-- find the contact by name and add a new phone number to them
 CREATE OR REPLACE PROCEDURE add_phone(
     p_contact_name VARCHAR,
     p_phone        VARCHAR,
@@ -14,7 +13,7 @@ LANGUAGE plpgsql AS $$
 DECLARE
     v_contact_id INTEGER;
 BEGIN
-    -- Resolve contact by first_name (or "first last" composite)
+    -- figure out the contact id by checking their first or full name
     SELECT id INTO v_contact_id
     FROM contacts
     WHERE LOWER(first_name || COALESCE(' ' || last_name, '')) = LOWER(TRIM(p_contact_name))
@@ -25,6 +24,7 @@ BEGIN
         RAISE EXCEPTION 'Contact "%" not found.', p_contact_name;
     END IF;
 
+    -- make sure they gave a correct phone type
     IF p_type NOT IN ('home', 'work', 'mobile') THEN
         RAISE EXCEPTION 'Invalid phone type "%". Must be home, work, or mobile.', p_type;
     END IF;
@@ -37,9 +37,8 @@ END;
 $$;
 
 
--- 2. move_to_group ───────────────────────────────────────────
---    Moves a contact to the specified group, creating the group
---    if it does not already exist.
+-- 2. move_to_group
+-- move a contact to a group, and make the group if it's missing
 CREATE OR REPLACE PROCEDURE move_to_group(
     p_contact_name VARCHAR,
     p_group_name   VARCHAR
@@ -49,7 +48,7 @@ DECLARE
     v_contact_id INTEGER;
     v_group_id   INTEGER;
 BEGIN
-    -- Resolve contact
+    -- get the contact id first
     SELECT id INTO v_contact_id
     FROM contacts
     WHERE LOWER(first_name || COALESCE(' ' || last_name, '')) = LOWER(TRIM(p_contact_name))
@@ -60,7 +59,7 @@ BEGIN
         RAISE EXCEPTION 'Contact "%" not found.', p_contact_name;
     END IF;
 
-    -- Upsert group
+    -- insert group if it's not already in the db
     INSERT INTO groups (name)
     VALUES (p_group_name)
     ON CONFLICT (name) DO NOTHING;
@@ -74,9 +73,8 @@ END;
 $$;
 
 
--- 3. search_contacts ─────────────────────────────────────────
---    Full-field search: first/last name, email, and ALL phones
---    in the phones table.  Returns a result set.
+-- 3. search_contacts
+-- search across everything: name, email, phones
 CREATE OR REPLACE FUNCTION search_contacts(p_query TEXT)
 RETURNS TABLE (
     id         INTEGER,
