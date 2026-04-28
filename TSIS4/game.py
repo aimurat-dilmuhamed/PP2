@@ -116,7 +116,7 @@ def run_game(screen, settings, personal_best):
 
         # if we ate food, get points and maybe level up
         if new_head == food:
-            if settings["sound"]: pass # pygame.mixer.Sound('eat.wav').play()
+            if settings["sound"]: pass 
             if food_type == "normal": score += 10
             elif food_type == "weighted": score += 30
             
@@ -143,7 +143,7 @@ def run_game(screen, settings, personal_best):
 
         # if we ate poison, shrink the snake
         if poison and new_head == poison:
-            if settings["sound"]: pass # pygame.mixer.Sound('hurt.wav').play()
+            if settings["sound"]: pass 
             if len(snake) > 0: snake.pop()
             if len(snake) > 0: snake.pop()
             poison = None
@@ -163,7 +163,7 @@ def run_game(screen, settings, personal_best):
             
         # check if we grabbed a powerup
         if powerup and new_head == powerup:
-            if settings["sound"]: pass # pygame.mixer.Sound('powerup.wav').play()
+            if settings["sound"]: pass 
             active_effect = powerup_type
             effect_end_time = current_time + 5000 # lasts for 5 seconds
             if powerup_type == "shield": shield_active = True
